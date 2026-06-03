@@ -87,8 +87,9 @@ def load_data():
     camas = camas.rename(columns={"nombre": "piso"})
     
     # CORRECCIÓN: Unir hospitalizacion con camas
-    hosp = hosp.merge(camas[["id", "numero", "area", "piso", "urgencias"]], left_on="cama_id", right_on="id", how="left", suffixes=("", "_cama"))
-    hosp = hosp.rename(columns={"urgencias": "es_urgencias_cama"})
+    # hosp ya tiene su propia columna "urgencias" → renombrar la de camas antes del merge
+    camas = camas.rename(columns={"urgencias": "urgencias_cama"})
+    hosp = hosp.merge(camas[["id", "numero", "area", "piso", "urgencias_cama"]], left_on="cama_id", right_on="id", how="left")
     
     # CORRECCIÓN: Unir con pacientes
     pac_cols = ["id", "nombre", "sexo", "edad", "tipo_paciente", "estado_civil", "unidad_medica"]
